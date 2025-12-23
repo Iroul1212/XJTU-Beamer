@@ -1,0 +1,193 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{xjtubeamer}[2025/12/23 XJTU Beamer Theme Final]
+
+%----------------------------------------------------------------------------------------
+%   1. 核心宏包依赖
+%----------------------------------------------------------------------------------------
+\RequirePackage{ctex}
+\RequirePackage{amsmath, amsfonts, amssymb, bm}
+\RequirePackage{booktabs}
+\RequirePackage{graphicx}
+\RequirePackage{subfig}
+\RequirePackage{hyperref}
+\RequirePackage{listings}
+\RequirePackage{tikz}
+\RequirePackage{float}
+\RequirePackage{tabularx} % 宽表格支持
+
+% 定义居中自适应列格式 'Y'
+\newcolumntype{Y}{>{\centering\arraybackslash}X} 
+
+%----------------------------------------------------------------------------------------
+%   2. 配色定义 (XJTU Colors)
+%----------------------------------------------------------------------------------------
+\definecolor{XJTUBlue}{RGB}{0, 65, 130}      % 深蓝
+\definecolor{XJTURed}{RGB}{198, 12, 48}       % 深红
+\definecolor{XJTUGreen}{RGB}{0, 150, 94}      % 绿色
+\definecolor{XJTUGray}{RGB}{245, 245, 245}    % 浅灰
+\definecolor{RowColorOdd}{RGB}{230, 240, 255} % 表格奇数行
+\definecolor{RowColorEven}{RGB}{255, 255, 255}% 表格偶数行
+
+%----------------------------------------------------------------------------------------
+%   3. 主题与外观设置
+%----------------------------------------------------------------------------------------
+\mode<presentation>
+
+% 调用基础主题
+\useoutertheme{split}       
+\useinnertheme[shadow]{rounded} 
+\usecolortheme{whale}       
+\usecolortheme{orchid}      
+
+% 强制应用配色
+\usecolortheme[named=XJTUBlue]{structure} 
+\setbeamercolor{frametitle}{bg=XJTUBlue, fg=white} 
+\setbeamercolor{title}{bg=XJTUBlue, fg=white}      
+\setbeamercolor{section in head/foot}{bg=XJTUBlue, fg=white} 
+\setbeamercolor{subsection in head/foot}{bg=XJTUBlue!80, fg=white} 
+\setbeamercolor{author in head/foot}{bg=XJTUBlue, fg=white}  
+\setbeamercolor{title in head/foot}{bg=XJTUBlue!80, fg=white} 
+
+% 列表与导航符号
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{enumerate items}[circle]
+\setbeamertemplate{sections/subsections in toc}[ball]
+\setbeamertemplate{navigation symbols}{}
+
+%----------------------------------------------------------------------------------------
+%   4. Logo 与背景设置
+%----------------------------------------------------------------------------------------
+
+% 背景大水印 (保持透明度)
+\setbeamertemplate{background}{
+    \begin{tikzpicture}[remember picture, overlay]
+        % opacity=0.15 保证可见性又不干扰文字
+        \node[opacity=0.15] at (current page.center) {
+           \includegraphics[width=0.5\paperwidth]{logo.png}
+        };
+    \end{tikzpicture}
+}
+
+\makeatletter
+
+% 页眉 (Headline) - 已彻底移除右上角 Logo
+\defbeamertemplate*{headline}{xjtu theme}{%
+  \leavevmode%
+  \@tempdimb=3ex%
+  \ifdim\@tempdimb>0pt%
+    \advance\@tempdimb by 1.125ex%
+    \begin{beamercolorbox}[wd=.75\paperwidth,ht=\@tempdimb]{section in head/foot}%
+      \vbox to\@tempdimb{\vfil\insertsectionnavigationhorizontal{.75\textwidth}{\hskip0pt plus1filll}{}\vfil}%
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.25\paperwidth,ht=\@tempdimb,center]{subsection in head/foot}%
+       % 此处留空，不显示图片
+       \vbox to\@tempdimb{\vfil}%
+    \end{beamercolorbox}%
+  \fi%
+}
+
+% 页脚 (Footline)
+\defbeamertemplate*{footline}{xjtu theme}{%
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.25\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\insertshortauthor
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.25\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\insertshortdate
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.435\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+    \usebeamerfont{title in head/foot}\insertshorttitle
+  \end{beamercolorbox}%
+   \begin{beamercolorbox}[wd=0.065\paperwidth,ht=2.25ex,dp=1ex,right]{title in head/foot}%
+    \insertframenumber{} / \inserttotalframenumber\hspace*{2ex}
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
+% 标题栏 (Frametitle) - 渐变背景
+\pgfdeclarehorizontalshading[frametitle.bg,frametitle right.bg]{beamer@frametitleshade}{\paperheight}{%
+  color(0pt)=(XJTUBlue);
+  color(\paperwidth)=(XJTUBlue!80!black)}
+
+\defbeamertemplate*{frametitle}{xjtu theme}{%
+  \nointerlineskip%
+  \hbox{\leavevmode
+    \advance\beamer@leftmargin by -12bp%
+    \advance\beamer@rightmargin by -12bp%
+    \beamer@tempdim=\textwidth%
+    \advance\beamer@tempdim by \beamer@leftmargin%
+    \advance\beamer@tempdim by \beamer@rightmargin%
+    \hskip-\Gm@lmargin\hbox{%
+      \setbox\beamer@tempbox=\hbox{\begin{minipage}[b]{\paperwidth}%
+          \vbox{}\vskip-.75ex%
+          \leftskip0.3cm%
+          \rightskip0.3cm plus1fil\leavevmode
+          \insertframetitle%
+          \ifx\insertframesubtitle\@empty%
+            \strut\par%
+          \else
+            \par{\usebeamerfont*{framesubtitle}{\usebeamercolor[fg]{framesubtitle}\insertframesubtitle}\strut\par}%
+          \fi%
+          \nointerlineskip
+          \vbox{}%
+          \end{minipage}}%
+      \beamer@tempdim=\ht\beamer@tempbox%
+      \advance\beamer@tempdim by 2pt%
+      \begin{pgfpicture}{0.0mm}{0pt}{1.00\paperwidth}{\beamer@tempdim}
+        \usebeamercolor{frametitle right}
+        \pgfpathrectangle{\pgfpointorigin}{\pgfpoint{\paperwidth}{\beamer@tempdim}}
+        \pgfusepath{clip}
+        \pgftext[left,base]{\pgfuseshading{beamer@frametitleshade}}
+      \end{pgfpicture}
+      \hskip-\paperwidth%
+      \box\beamer@tempbox%
+    }%
+    \hskip-\Gm@rmargin%
+  }%
+}
+\makeatother
+
+% 启用自定义模板
+\setbeamertemplate{headline}[xjtu theme]
+\setbeamertemplate{footline}[xjtu theme]
+\setbeamertemplate{frametitle}[xjtu theme]
+
+\mode
+<all>
+
+%----------------------------------------------------------------------------------------
+%   5. 功能开关与辅助命令
+%----------------------------------------------------------------------------------------
+
+% 章节分隔页开关
+\newif\ifShowSeparator
+\ShowSeparatortrue % 默认开启，若要关闭请在 main.tex 中设置 \ShowSeparatorfalse
+
+\AtBeginSection[]{
+  \ifShowSeparator
+    \begin{frame}
+      \frametitle{\textbf{目录}}
+      \tableofcontents[currentsection, hideallsubsections]
+    \end{frame}
+  \fi
+}
+
+% MATLAB 代码样式配置
+\definecolor{codebg}{rgb}{0.96,0.96,0.96}
+\definecolor{matlabKeyword}{HTML}{0000CC}
+\definecolor{matlabComment}{HTML}{008000}
+\definecolor{matlabString}{HTML}{A31515}
+
+\lstdefinestyle{matlabstyle}{
+  language=Matlab,
+  basicstyle=\scriptsize\ttfamily,
+  numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=6pt,
+  keywordstyle=\color{matlabKeyword}, 
+  commentstyle=\color{matlabComment}, 
+  stringstyle=\color{matlabString},
+  frame=single, framesep=4pt, framerule=0pt,
+  tabsize=2, backgroundcolor=\color{codebg},
+  breaklines=true
+}
+\lstnewenvironment{matlabcode}[1][]{\lstset{style=matlabstyle,#1}}{}

@@ -1,0 +1,137 @@
+% !TEX program = xelatex
+% !BIB program = biber
+
+% 【注意】xcolor=table 必须在这里启用，用于支持彩色表格
+\documentclass[10pt, aspectratio=169, mathserif, xcolor=table]{beamer}
+
+% 引入我们自定义的样式文件
+\usepackage{xjtubeamer}
+
+% 参考文献设置 (使用 biblatex IEEE 风格)
+\usepackage[style=ieee, backend=biber]{biblatex}
+\addbibresource{reference.bib} % 导入 reference.bib
+
+%----------------------------------------------------------------------------------------
+%   用户配置区
+%----------------------------------------------------------------------------------------
+\title[XJTU Report]{电气工程学术报告}
+\subtitle{——最终集成演示版}
+\author[你的名字]{汇报人：你的名字}
+\institute[XJTU]{西安交通大学 \\ 电气工程学院}
+\date{\today}
+
+% 若想关闭每章开头的目录页，请取消下面这行的注释
+% \ShowSeparatorfalse 
+
+%----------------------------------------------------------------------------------------
+%   正文开始
+%----------------------------------------------------------------------------------------
+\begin{document}
+
+% 1. 封面
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% 2. 总目录
+\begin{frame}{\textbf{目录}}
+    \tableofcontents[hideallsubsections]
+\end{frame}
+
+% --- 第1章：表格与布局 ---
+\section{表格与排版}
+
+\begin{frame}{自适应宽表格 (Tabularx)}
+    使用我们定义的 \texttt{tabularx} 环境，表格宽度设为页面 \textbf{95\%}。
+    
+    \begin{table}[H]
+        \centering
+        % 隔行变色设置
+        \rowcolors{2}{RowColorOdd}{RowColorEven}
+        \caption{PMSM 电机参数表 (宽度自适应)}
+        
+        \begin{tabularx}{0.95\textwidth}{Y Y Y Y} 
+            % 表头：深蓝底白字
+            \rowcolor{XJTUBlue} \color{white}\textbf{参数名称} & \color{white}\textbf{符号} & \color{white}\textbf{数值} & \color{white}\textbf{单位} \\
+            额定功率 & $P_N$ & 3.0 & kW \\
+            额定电压 & $U_N$ & 380 & V \\
+            额定转速 & $n_N$ & 1500 & r/min \\
+            定子电阻 & $R_s$ & 0.85 & $\Omega$ \\
+            直轴电感 & $L_d$ & 4.5 & mH \\
+        \end{tabularx}
+    \end{table}
+\end{frame}
+
+% --- 第2章：代码演示 ---
+\section{代码演示}
+
+\begin{frame}[fragile]{MATLAB 专用环境}
+    使用 \texttt{matlabcode} 环境，配色更接近 MATLAB 编辑器。
+    
+    \begin{matlabcode}
+% 空间矢量脉宽调制 (SVPWM)
+if (T1 + T2 > Ts)
+    % 过调制处理
+    ratio = Ts / (T1 + T2);
+    T1 = T1 * ratio;
+    T2 = T2 * ratio;
+end
+T0 = Ts - T1 - T2;
+    \end{matlabcode}
+\end{frame}
+
+\begin{frame}[fragile]{Python/C++ 通用环境}
+    使用标准的 \texttt{lstlisting} 环境，适合展示算法逻辑。
+    
+    \begin{block}{Python 快速排序}
+    \begin{lstlisting}[language=Python, basicstyle=\ttfamily\small, keywordstyle=\color{blue!80!black}, commentstyle=\color{green!60!black}, frame=single]
+def quick_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    pivot = arr[len(arr) // 2]
+    # 列表推导式
+    left = [x for x in arr if x < pivot]
+    middle = [x for x in arr if x == pivot]
+    right = [x for x in arr if x > pivot]
+    return quick_sort(left) + middle + quick_sort(right)
+    \end{lstlisting}
+    \end{block}
+\end{frame}
+
+% --- 第3章：参考文献 ---
+\section{文献引用}
+
+\begin{frame}{学术引用演示}
+    \begin{itemize}
+        \item \textbf{教材引用}：
+        关于 LaTeX 的经典参考书 \cite{lamport1994latex}。
+        
+        \item \textbf{期刊论文}：
+        信息论的基础是香农提出的 \cite{shannon1948mathematical}。
+        
+        \item \textbf{会议论文}：
+        深度学习中的 Attention 机制 \cite{vaswani2017attention}。
+    \end{itemize}
+    
+    \vspace{1cm}
+    \begin{alertblock}{说明}
+        这些引用会自动生成下方的文献列表。编译顺序：XeLaTeX -> Biber -> XeLaTeX。
+    \end{alertblock}
+\end{frame}
+
+% 文献列表页
+\begin{frame}[allowframebreaks]{参考文献}
+    \printbibliography
+\end{frame}
+
+% --- 结束页 ---
+\section{总结}
+\begin{frame}
+    \centering
+    \Huge \textcolor{XJTUBlue}{谢\quad 谢！}
+    
+    \vspace{1cm}
+    \large 敬请各位专家批评指正
+\end{frame}
+
+\end{document}
